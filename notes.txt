@@ -1,0 +1,13 @@
+Compile:
+mkdir -p ~/Code/php
+cd ~/Code/php
+git clone https://github.com/ornfelt/phpactor.git
+cd phpactor
+composer install
+cd /usr/local/bin
+sudo ln -s ~/Code/php/phpactor/bin/phpactor phpactor
+
+phpactor.bat (might be useful for windows, might need other fixes):
+@echo off
+php C:\Code\php\phpactor\bin\phpactor language-server
+

@@ -13,14 +13,21 @@ final class FilePath
     {
     }
 
+    private function normalizePath(string $path): string
+    {
+	    return str_replace('C:', '/mnt/c', $path);
+    }
+
     public function __toString(): string
     {
-        return $this->uri->path();
+        //return $this->uri->path();
+	return $this->normalizePath($this->uri->path());
     }
 
     public function uriAsString(): string
     {
-        return $this->uri->__toString();
+        //return $this->uri->__toString();
+	return $this->normalizePath($this->uri->__toString());
     }
 
     public static function fromString(string $string): FilePath
@@ -59,9 +66,9 @@ final class FilePath
         }
     }
 
-    public function isDirectory(): bool
+        public function isDirectory(): bool
     {
-        return is_dir($this->uri->path());
+        return is_dir($this->normalizePath($this->uri->path()));
     }
 
     /**
@@ -69,11 +76,13 @@ final class FilePath
      */
     public function asSplFileInfo(): SplFileInfo
     {
-        return new SplFileInfo($this->uri->path());
+        return new SplFileInfo($this->normalizePath($this->uri->path()));
     }
 
     public function makeAbsoluteFromString(string $path): FilePath
     {
+        $path = $this->normalizePath($path);
+
         if (Path::isAbsolute($path)) {
             $path = self::fromString($path);
 
@@ -93,17 +102,17 @@ final class FilePath
 
     public function extension(): string
     {
-        return Path::getExtension($this->uri->path());
+        return Path::getExtension($this->normalizePath($this->uri->path()));
     }
 
     public function isWithin(FilePath $path): bool
     {
-        return Path::isBasePath($path->path(), $this->path());
+        return Path::isBasePath($this->normalizePath($path->path()), $this->normalizePath($this->path()));
     }
 
     public function isWithinOrSame(FilePath $path): bool
     {
-        if ($this->path() == $path->path()) {
+        if ($this->normalizePath($this->path()) == $this->normalizePath($path->path())) {
             return true;
         }
 
@@ -112,11 +121,11 @@ final class FilePath
 
     public function isNamed(string $name): bool
     {
-        return basename($this->path()) == $name;
+        return basename($this->normalizePath($this->path())) == $name;
     }
 
     public function path(): string
     {
-        return $this->uri->path();
+        return $this->normalizePath($this->uri->path());
     }
 }
